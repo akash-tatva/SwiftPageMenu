@@ -19,6 +19,8 @@ open class PageMenuController: UIViewController {
             self.reloadPages(reloadViewControllers: true)
         }
     }
+    
+    open var customHeaderView: UIView?{return nil}
 
     /// PageMenuController delegate.
     open weak var delegate: PageMenuControllerDelegate?
@@ -30,14 +32,14 @@ open class PageMenuController: UIViewController {
     open internal(set) var menuTitles = [String]()
 
     /// Current page index
-    var currentIndex: Int? {
+public var currentIndex: Int? {
         guard let viewController = self.pageViewController.selectedViewController else {
             return nil
         }
         return self.viewControllers.firstIndex(of: viewController)
     }
 
-    fileprivate lazy var pageViewController: EMPageViewController = {
+    public lazy var pageViewController: EMPageViewController = {
         let vc = EMPageViewController(navigationOrientation: .horizontal)
 
         vc.view.backgroundColor = .clear
@@ -147,7 +149,10 @@ open class PageMenuController: UIViewController {
     public func scrollToNext(animated: Bool, completion: ((Bool) -> Void)?) {
         self.pageViewController.scrollForward(animated: animated, completion: completion)
     }
-
+    public func scroll(width: CGFloat, animated: Bool, currentIndex: Int, toIndex: Int) {
+        self.pageViewController.scroll(width: width, animated: animated, currentIndex: currentIndex, toIndex: toIndex)
+    }
+// akash testing pods
     /**
      Transitions to the previous page.
 
@@ -261,7 +266,6 @@ open class PageMenuController: UIViewController {
         case .top:
             // add tab view
             self.view.addSubview(self.tabView)
-
             // setup page view controller layout
             self.pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
             self.pageViewController.view.topAnchor.constraint(equalTo: self.tabView.bottomAnchor).isActive = true
@@ -279,14 +283,26 @@ open class PageMenuController: UIViewController {
             case .layoutGuide:
                 if #available(iOS 11.0, *) {
                     self.pageViewController.view.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-                    self.tabView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
+                    if let headerView = customHeaderView {
+                        self.tabView.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
+                    }else{
+                        self.tabView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
+                    }
                 } else {
                     self.pageViewController.view.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.bottomAnchor).isActive = true
-                    self.tabView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
+                    if let headerView = customHeaderView {
+                        self.tabView.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
+                    }else{
+                        self.tabView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
+                    }
                 }
             case .edge:
                 self.pageViewController.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-                self.tabView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+                if let headerView = customHeaderView {
+                    self.tabView.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
+                }else{
+                    self.tabView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+                }
             }
         case .bottom:
             // add tab view

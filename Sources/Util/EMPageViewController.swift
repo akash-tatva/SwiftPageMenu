@@ -102,7 +102,7 @@ import UIKit
 /**
  The navigation scroll direction.
  */
-@objc enum EMPageViewControllerNavigationDirection : Int {
+ @objc public enum EMPageViewControllerNavigationDirection : Int {
     /// Forward direction. Can be right in a horizontal orientation or down in a vertical orientation.
     case forward
     /// Reverse direction. Can be left in a horizontal orientation or up in a vertical orientation.
@@ -120,7 +120,7 @@ import UIKit
 }
 
 /// Manages page navigation between view controllers. View controllers can be navigated via swiping gestures, or called programmatically.
-class EMPageViewController: UIViewController, UIScrollViewDelegate {
+public class EMPageViewController: UIViewController, UIScrollViewDelegate {
 
     /// The object that provides view controllers on an as-needed basis throughout the navigation of the page view controller.
     ///
@@ -250,6 +250,30 @@ class EMPageViewController: UIViewController, UIScrollViewDelegate {
                 self.scrollView.setContentOffset(CGPoint(x: self.view.bounds.width * 2, y: 0), animated: animated)
             } else {
                 self.scrollView.setContentOffset(CGPoint(x: 0, y: self.view.bounds.height * 2), animated: animated)
+            }
+
+        }
+    }
+    
+    open func scroll(width: CGFloat ,animated: Bool, currentIndex: Int, toIndex: Int) {
+
+        if (self.afterViewController != nil) {
+            let theFactor = CGFloat(toIndex - currentIndex)
+            // Cancel current animation and move
+            if self.scrolling {
+                if self.isOrientationHorizontal {
+                    self.scrollView.setContentOffset(CGPoint(x: width * theFactor, y: 0), animated: false)
+                } else {
+                    self.scrollView.setContentOffset(CGPoint(x: 0, y: self.view.bounds.height * theFactor), animated: false)
+                }
+
+            }
+
+            self.transitionAnimated = animated
+            if self.isOrientationHorizontal {
+                self.scrollView.setContentOffset(CGPoint(x: width * theFactor, y: 0), animated: animated)
+            } else {
+                self.scrollView.setContentOffset(CGPoint(x: 0, y: self.view.bounds.height * theFactor), animated: animated)
             }
 
         }
