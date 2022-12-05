@@ -67,7 +67,7 @@ public enum TabMenuPosition {
  */
 public enum PageMenuLayout {
 
-    case layoutGuide
+    case layoutGuide(topSpace: CGFloat = 0)
 
     case edge
 }
@@ -112,7 +112,7 @@ extension PageMenuOptions {
     }
 
     public var layout: PageMenuLayout {
-        return .layoutGuide
+        return .layoutGuide()
     }
 }
 

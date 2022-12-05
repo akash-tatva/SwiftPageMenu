@@ -280,13 +280,13 @@ public var currentIndex: Int? {
 
             // use layout guide or edge
             switch self.options.layout {
-            case .layoutGuide:
+            case .layoutGuide(let topSpace):
                 if #available(iOS 11.0, *) {
                     self.pageViewController.view.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
                     if let headerView = customHeaderView {
                         self.tabView.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
                     }else{
-                        self.tabView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
+                        self.tabView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: topSpace).isActive = true
                     }
                 } else {
                     self.pageViewController.view.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.bottomAnchor).isActive = true
